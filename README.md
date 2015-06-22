@@ -23,11 +23,13 @@ First add this package to your app:
 meteor add vazco:universe-modules
 ```
 
-Universe Modules use internally core package `babel-compiler`.  
+Universe Modules uses core package `babel-compiler`.  
 Unfortunately at the moment this package is still work in progress and MDG is not providing it from the official repositories.
 You have to download it manually from https://github.com/meteor/react-packages/tree/master/babel-compiler
 
 The same way you add official but not yet released React support.
+
+This will change in near future and this package won't have any non-core dependencies.
 
 ## Usage
 
@@ -64,6 +66,11 @@ Some normal **file.js**:
         console.log( sayHello() ); // this will log "Hello World!"
         
     });
+
+This assumes that file say_hello.import.js is inside main app directory.  
+If you have it somewhere else you have to provide full path relative to meteor app directory,
+e.g. `client/components/say_hello`.
+
 
 More about System.js API can be found [on their Github documentation](https://github.com/systemjs/systemjs/blob/master/docs/system-api.md)
 
