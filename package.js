@@ -1,6 +1,6 @@
 Package.describe({
     name: 'vazco:universe-modules',
-    version: '0.0.2',
+    version: '0.0.4',
     summary: 'Use ES2015 modules in Meteor today!',
     git: 'https://github.com/vazco/universe-modules',
     documentation: 'README.md'
@@ -8,7 +8,7 @@ Package.describe({
 
 Package.registerBuildPlugin({
     name: 'UniverseModulesBuilder',
-    use: ['babel-compiler'],
+    use: ['unofficial:babel-compiler@5.4.7'],
     sources: ['build-plugin.js']
 });
 
