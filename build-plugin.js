@@ -2,13 +2,16 @@ var handler = function (compileStep) {
     var source = compileStep.read().toString('utf8');
     var outputFile = compileStep.inputPath + '.js';
 
-    var ext = compileStep.inputPath.split('.import.');
-    var moduleId = ext[0];
+    var path = compileStep.inputPath.split('.import.');
+    var moduleId = path[0];
 
-    // @todo: add package prefix support
+    if(compileStep.packageName){
+        // inside package, prefix module
+        moduleId = compileStep.packageName + '/' + moduleId;
+    }
 
     var extraWhitelist = ['es6.modules'];
-    if(ext[1] === 'jsx'){
+    if(path[1] === 'jsx'){
         extraWhitelist.push('react')
     }
 

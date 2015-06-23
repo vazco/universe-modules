@@ -1,7 +1,7 @@
 Package.describe({
-    name: 'vazco:universe-modules',
-    version: '0.0.4',
-    summary: 'Use ES2015 modules in Meteor today!',
+    name: 'universe:modules',
+    version: '0.1.0',
+    summary: 'Use ES6 / ES2015 modules in Meteor with SystemJS!',
     git: 'https://github.com/vazco/universe-modules',
     documentation: 'README.md'
 });
@@ -18,10 +18,11 @@ Npm.depends({
 
 Package.onUse(function (api) {
 
-    // We need XMLHttpRequest on the server side for System.js
+    // We need XMLHttpRequest on the server side for SystemJS remote fetching (or SystemJS won't run)
+    // This may change in near future if we find better way to run SystemJS
     api.addFiles('vendor/xhr2.js', 'server');
 
-    // Load System.js
+    // Load SystemJS
     api.addFiles([
         'vendor/system-polyfills.js',
         'vendor/system.js' // There is a core change in this file! Meteor uses `Npm.require` instead of `require`
