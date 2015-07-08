@@ -36,11 +36,6 @@ Just add this package to your app:
 
     meteor add universe:modules
 
-Universe Modules uses core package `babel-compiler`.  
-Unfortunately at the moment this package is still work in progress and MDG is not providing it from the official repositories.
-We have to put it temporary on atmosphere as an unofficial package.   
-
-This will change in near future and Universe Module won't have any non-core dependencies.
 
 ## Usage
 
