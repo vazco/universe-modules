@@ -9,7 +9,8 @@ These files will be bundled with your Meteor app, but won't get executed until y
 This is somewhat similar to `*.import.less` files, that you can include inside normal `*.less` files.
 
 API is compatible with new ES6 modules spec.
-Under the hood [Babel.js](https://babeljs.io) and [SystemJS](https://github.com/systemjs/systemjs) take care of everything, so you can write future-proof code today!
+Under the hood [Babel.js](https://babeljs.io) and [SystemJS](https://github.com/systemjs/systemjs) take care of everything,
+so you can use modules today!
 
 All `*.import.js` files have ES6 support provided by Meteor's Babel.js implementation.
 `*.import.jsx` files have also JSX/React support.
@@ -23,7 +24,7 @@ Universe Modules allows you to write your code in modular way, something that Me
 This is especially useful when working with React - creating lots of new components don't have to pollute global namespace.
 Also code is much simpler to reason about, and syntax is more friendly.
  
-Code you write inside `*.import.js(x)` files is future-proof - when Meteor introduces full support for ECMAScript 2015 in the future, your code will be ready for it.
+Code you write inside `*.import.js(x)` is compiled using Babel, so you can also use other ES2015 features! 
 
 #### Roadmap
 
@@ -41,46 +42,59 @@ Just add this package to your app:
 
 ### Basic usage inside app
 
-Create file **something1.import.js**:
+Create file `firstComponent.import.js`:
 
     export default function (){
       return 'Hello';
     }
 
-and **something2.import.js**:
+and `secondComponent.import.js`:
 
     export default function (){
       return 'World';
     }
 
-Then you can import and make use of them inside some other file, e.g. **say_hello.import.js**:
+Then you can import and make use of them inside some other file, e.g. `finalComponent.import.js`:
 
-    import hello from './something1';
-    import world from './something2';
+    import first from './firstComponent';
+    import second from './secondComponent';
     
     export default function(){
-      return hello() + ' ' + world() + '!';
+      return first() + ' ' + second() + '!';
     }
 
 
 If you want to execute this inside Meteor app, you need to use SystemJS API:
 
-Some normal **file.js**:
+Some normal `file.js`:
 
-    System.import('say_hello').then(function(module){
+    System.import('finalComponent').then(function(module){
     
-        var sayHello = module.default; // default export is attached as default property, all named exports are attached by their name
+        // default export is attached as default property
+        // all named exports are attached by their name
+        var sayHello = module.default;
         
         console.log( sayHello() ); // this will log "Hello World!"
         
     });
 
-This assumes that file say_hello.import.js is inside main app directory.  
+This assumes that file `finalComponent.import.js` is inside main app directory.  
 If you have it somewhere else you have to provide full path relative to meteor app directory,
-e.g. `client/components/say_hello`.
+e.g. `client/components/finalComponent`.
 
-You can also see some really basic example project at [Github](https://github.com/vazco/demo_modules).
-This example will be expanded in near future.
+### Complete app example
+
+If you want to see it in action, we created a todo example app.
+
+Source code: https://github.com/vazco/demo_modules
+Live demo: http://universe-modules-demo.meteor.com
+
+This demo make use of:
+
+- core `react` package
+- `universe:react-bootstrap`
+- `meteorhacks:flow-router` and `kadira:react-layout`
+
 
 ### Loading modules from packages
 
@@ -90,7 +104,7 @@ To load files from packages prefix path with full package name, e.g:
 
 Some Meteor packages are compatible with Universe Modules and also register nice module names in SystemJS
 
-An example could be `universe:react-bootstrap`.
+An example could be [universe:react-bootstrap](https://atmospherejs.com/universe/react-bootstrap).
 Once added to Meteor project, you can write:
 
     import { Button } from 'bootstrap';
@@ -98,8 +112,6 @@ Once added to Meteor project, you can write:
 and use components from [ReactBootstrap](https://react-bootstrap.github.io/) packaged for Meteor projects.
 
 ### SystemJS API
-
-SystemJS is very powerful tool.
 
 More about SystemJS API can be found [on their Github documentation](https://github.com/systemjs/systemjs/blob/master/docs/system-api.md)
 
@@ -116,7 +128,7 @@ You can set alternative name for a module, below is an example from `universe:re
 
 ## Troubleshooting
 
-### `Uncaught SyntaxError: Unexpected token <` or `Potentially unhandled rejection [2] Uncaught SyntaxError: Unexpected token <`
+- `Uncaught SyntaxError: Unexpected token <` or `Potentially unhandled rejection [2] Uncaught SyntaxError: Unexpected token <`
 
 You misspelled import name/path. SystemJS tries to download this file from remote location and fails.
 
@@ -127,5 +139,5 @@ You'll find misspelled code in the error stack trace.
 
 ----
 
-> This package is part of Universe, a framework based on [Meteor platform](http://meteor.com) maintained by [Vazco](http://www.vazco.eu).
+> This package is part of [Universe](http://unicms.io), a framework based on [Meteor platform](http://meteor.com) maintained by [Vazco](http://www.vazco.eu).
 > It works as standalone Meteor package, but you can get much more features when using the whole system.
