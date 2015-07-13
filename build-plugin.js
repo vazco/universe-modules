@@ -12,7 +12,7 @@ var handler = function (compileStep) {
 
     var extraWhitelist = ['es6.modules'];
     if(path[1] === 'jsx'){
-        extraWhitelist.push('react')
+        extraWhitelist.push('react');
     }
 
     try {

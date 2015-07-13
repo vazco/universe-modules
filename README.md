@@ -4,18 +4,17 @@
 
 You can read more about new JavaScript modules and see some examples at [JSModules.io](http://jsmodules.io) or [2ality](http://www.2ality.com/2014/09/es6-modules-final.html)
 
-This package add new file extensions: `*.import.js` and `*.import.jsx`.  
+**This package add new file extensions:** `*.import.js` and `*.import.jsx`.  
 These files will be bundled with your Meteor app, but won't get executed until you request them.
 This is somewhat similar to `*.import.less` files, that you can include inside normal `*.less` files.
 
+All `*.import.js` files **have full ES6 support** provided by Meteor's Babel.js implementation.
+`*.import.jsx` files also have JSX/React support.
+
 API is compatible with new ES6 modules spec.
-Under the hood [Babel.js](https://babeljs.io) and [SystemJS](https://github.com/systemjs/systemjs) take care of everything,
-so you can use modules today!
+Under the hood [Babel.js](https://babeljs.io) and [SystemJS](https://github.com/systemjs/systemjs) take care of everything, so you can use modules today!
 
-All `*.import.js` files have ES6 support provided by Meteor's Babel.js implementation.
-`*.import.jsx` files have also JSX/React support.
-
-This package also adds SystemJS to your project.
+This package adds SystemJS to your project.
 
 ## Benefits of this approach
 
@@ -24,7 +23,7 @@ Universe Modules allows you to write your code in modular way, something that Me
 This is especially useful when working with React - creating lots of new components don't have to pollute global namespace.
 Also code is much simpler to reason about, and syntax is more friendly.
  
-Code you write inside `*.import.js(x)` is compiled using Babel, so you can also use other ES2015 features! 
+Code you write inside `*.import.js(x)` is compiled using Babel, so **you can also use other ES2015 features!** 
 
 #### Roadmap
 
@@ -40,7 +39,19 @@ Just add this package to your app:
 
 ## Usage
 
-### Basic usage inside app
+### Complete app example
+
+If you want to see it in action, see our todo example app:
+
+- Source code: https://github.com/vazco/demo_modules
+- Live demo: http://universe-modules-demo.meteor.com
+
+You can also check out great `meteor-react-example` app by [optilude](https://github.com/optilude).
+
+- Source code: https://github.com/optilude/meteor-react-example/tree/modules
+
+
+### Basic usage
 
 Create file `firstComponent.import.js`:
 
@@ -81,19 +92,6 @@ Some normal `file.js`:
 This assumes that file `finalComponent.import.js` is inside main app directory.  
 If you have it somewhere else you have to provide full path relative to meteor app directory,
 e.g. `client/components/finalComponent`.
-
-### Complete app example
-
-If you want to see it in action, we created a todo example app.
-
-Source code: https://github.com/vazco/demo_modules
-Live demo: http://universe-modules-demo.meteor.com
-
-This demo make use of:
-
-- core `react` package
-- `universe:react-bootstrap`
-- `meteorhacks:flow-router` and `kadira:react-layout`
 
 
 ### Loading modules from packages
