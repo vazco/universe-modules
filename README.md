@@ -14,7 +14,7 @@ All `*.import.js` files **have full ES6 support** provided by Meteor's Babel.js 
 API is compatible with new ES6 modules spec.
 Under the hood [Babel.js](https://babeljs.io) and [SystemJS](https://github.com/systemjs/systemjs) take care of everything, so you can use modules today!
 
-This package adds SystemJS to your project.
+*This package adds SystemJS to your project.*
 
 ## Benefits of this approach
 
@@ -48,7 +48,7 @@ If you want to see it in action, see our todo example app:
 
 You can also check out great `meteor-react-example` app by [optilude](https://github.com/optilude).
 
-- Source code: https://github.com/optilude/meteor-react-example/tree/modules
+- Source code: https://github.com/optilude/meteor-react-example
 
 
 ### Basic usage
@@ -126,12 +126,11 @@ You can set alternative name for a module, below is an example from `universe:re
 
 ## Troubleshooting
 
-- `Uncaught SyntaxError: Unexpected token <` or `Potentially unhandled rejection [2] Uncaught SyntaxError: Unexpected token <`
+#### `[Universe Modules]: Module XXX does not exist!`
 
 You misspelled import name/path. SystemJS tries to download this file from remote location and fails.
 
 Check if all files are at their location and import paths are OK.
-You'll find misspelled code in the error stack trace.
 
 
 

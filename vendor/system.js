@@ -1,5 +1,5 @@
 /*
- * SystemJS v0.18.1
+ * SystemJS v0.18.4
  */
 (function() {
     function bootstrap() {(function(__global) {
@@ -41,8 +41,15 @@
             var newErr;
             if (err instanceof Error) {
                 var newErr = new Error(err.message, err.fileName, err.lineNumber);
-                newErr.message = err.message + '\n\t' + msg;
-                newErr.stack = err.stack;
+                if (isBrowser) {
+                    newErr.message = err.message + '\n\t' + msg;
+                    newErr.stack = err.stack;
+                }
+                else {
+                    // node errors only look correct with the stack modified
+                    newErr.message = err.message;
+                    newErr.stack = err.stack + '\n\t' + msg;
+                }
             }
             else {
                 newErr = err + '\n\t' + msg;
@@ -86,13 +93,7 @@
             throw new TypeError('No environment baseURI');
         }
 
-        var URL = __global.URL;
-        try {
-            new URL('test:///').protocol == 'test:';
-        }
-        catch(e) {
-            URL = URLPolyfill;
-        }
+        var URL = __global.URLPolyfill || __global.URL;
         /*
          *********************************************************************************************
 
@@ -1160,8 +1161,23 @@
                     '\n//# sourceMappingURL=data:application/json;base64,' + btoa(unescape(encodeURIComponent(load.metadata.sourceMap))) || '')
             }
 
+            // Web Worker and Chrome Extensions use original ESML eval
+            // this may lead to some global module execution differences (eg var not defining onto global)
+            if (isWorker || isBrowser && window.chrome && window.chrome.extension) {
+                __exec = function(load) {
+                    try {
+                        preExec(this);
+                        new Function(getSource(load)).call(__global);
+                        postExec();
+                    }
+                    catch(e) {
+                        throw addToError(e, 'Evaluating ' + load.address);
+                    }
+                };
+            }
+
             // use script injection eval to get identical global script behaviour
-            if (typeof document != 'undefined') {
+            else if (typeof document != 'undefined') {
                 var head;
 
                 var scripts = document.getElementsByTagName('script');
@@ -1187,26 +1203,10 @@
                         throw e;
                 }
             }
-            // Web Worker uses original ESML eval
-            // this may lead to some global module execution differences (eg var not defining onto global)
-            else if (isWorker) {
-                __exec = function(load) {
-                    try {
-                        preExec(this);
-                        new Function(getSource(load)).call(__global);
-                        postExec();
-                    }
-                    catch(e) {
-                        throw addToError(e, 'Evaluating ' + load.address);
-                    }
-                };
-            }
             else {
                 // global scoped eval for node
                 var vmModule = 'vm';
-                /* --- Core change to support Meteor --- */
-                var vm = Npm.require(vmModule);
-                /* --- end of core change --- */
+                var vm = require(vmModule);
                 __exec = function(load) {
                     try {
                         preExec(this);
@@ -1945,11 +1945,23 @@
                     entry.esModule = exports;
                 }
                 else {
-                    var hasOwnProperty = exports && exports.hasOwnProperty;
                     entry.esModule = {};
-                    for (var p in exports) {
-                        if (!hasOwnProperty || exports.hasOwnProperty(p))
-                            entry.esModule[p] = exports[p];
+
+                    // don't trigger getters/setters in environments that support them
+                    if (typeof exports == 'object' || typeof exports == 'function') {
+                        if (Object.getOwnPropertyDescriptor) {
+                            var d;
+                            for (var p in exports)
+                                if (d = Object.getOwnPropertyDescriptor(exports, p))
+                                    Object.defineProperty(entry.esModule, p, d);
+                        }
+                        else {
+                            var hasOwnProperty = exports && exports.hasOwnProperty;
+                            for (var p in exports) {
+                                if (!hasOwnProperty || exports.hasOwnProperty(p))
+                                    entry.esModule[p] = exports[p];
+                            }
+                        }
                     }
                     entry.esModule['default'] = exports;
                     defineProperty(entry.esModule, '__useDefault', {
@@ -2004,7 +2016,7 @@
                 };
             });
 
-            var registerRegEx = /^\s*(\/\*.*\*\/\s*|\/\/[^\n]*\s*)*System\.register(Dyanmic)?\s*\(/;
+            var registerRegEx = /^\s*(\/\*.*\*\/\s*|\/\/[^\n]*\s*)*System\.register(Dynamic)?\s*\(/;
 
             hook('fetch', function(fetch) {
                 return function(load) {
@@ -2935,9 +2947,13 @@
          *        './vendor/another.js': './another/index.js',
          *        // test.js / test -> lib/test.js
          *        './test.js': './lib/test.js',
-         *      }
-         *    }
-         *  }
+         *     },
+         *     env: {
+         *       'browser': {
+         *         main: 'browser.js'
+         *       }
+         *     }
+         *   }
          * };
          *
          * Then:
@@ -2977,6 +2993,43 @@
                 }
             }
 
+            function getPackageConfig(loader, pkgName) {
+                var pkgConfig = loader.packages[pkgName];
+
+                if (!pkgConfig.env)
+                    return Promise.resolve(pkgConfig);
+
+                // check environment conditions
+                // default environment condition is '@env' in package or '@system-env' globally
+                return loader['import'](pkgConfig.map['@env'] || '@system-env', pkgName)
+                    .then(function(env) {
+                        // derived config object
+                        var pkg = {};
+                        for (var p in pkgConfig)
+                            if (p !== 'map' & p !== 'env')
+                                pkg[p] = pkgConfig[p];
+
+                        pkg.map = {};
+                        for (var p in pkgConfig.map)
+                            pkg.map[p] = pkgConfig.map[p];
+
+                        for (var e in pkgConfig.env) {
+                            if (env[e]) {
+                                var envConfig = pkgConfig.env[e];
+                                if (envConfig.main)
+                                    pkg.main = envConfig.main;
+                                for (var m in envConfig.map)
+                                    pkg.map[m] = envConfig.map[m];
+                            }
+                        }
+
+                        // store the derived environment config so we have this cached for next time
+                        loader.packages[pkgName] = pkg;
+
+                        return pkg;
+                    });
+            }
+
             function applyMap(map, name) {
                 var bestMatch, bestMatchLength = 0;
 
@@ -2992,6 +3045,8 @@
                 if (bestMatch)
                     return map[bestMatch] + name.substr(bestMatch.length);
             }
+
+            SystemJSLoader.prototype.normalizeSync = SystemJSLoader.prototype.normalize;
 
             hook('normalize', function(normalize) {
                 return function(name, parentName) {
@@ -3028,45 +3083,51 @@
                     var pkgName = getPackage.call(this, normalized);
 
                     if (pkgName) {
-                        var pkg = this.packages[pkgName];
+                        return getPackageConfig(this, pkgName)
+                            .then(function(pkg) {
+                                // main
+                                if (pkgName === normalized && pkg.main)
+                                    normalized += '/' + (pkg.main.substr(0, 2) == './' ? pkg.main.substr(2) : pkg.main);
 
-                        // main
-                        if (pkgName === normalized && pkg.main)
-                            normalized += '/' + (pkg.main.substr(0, 2) == './' ? pkg.main.substr(2) : pkg.main);
+                                if (normalized.substr(pkgName.length) == '/')
+                                    return normalized;
 
-                        // defaultExtension & defaultJSExtension
-                        // if we have meta for this package, don't do defaultExtensions
-                        var defaultExtension = '';
-                        if (!pkg.meta || !pkg.meta[normalized.substr(pkgName.length + 1)]) {
-                            // apply defaultExtension
-                            if (pkg.defaultExtension) {
-                                if (normalized.split('/').pop().indexOf('.') == -1)
-                                    defaultExtension = '.' + pkg.defaultExtension;
-                            }
-                            // apply defaultJSExtensions if defaultExtension not set
-                            else if (defaultJSExtension) {
-                                defaultExtension = '.js';
-                            }
-                        }
+                                // defaultExtension & defaultJSExtension
+                                // if we have meta for this package, don't do defaultExtensions
+                                var defaultExtension = '';
+                                if (!pkg.meta || !pkg.meta[normalized.substr(pkgName.length + 1)]) {
+                                    // apply defaultExtension
 
-                        // apply submap checking without then with defaultExtension
-                        var subPath = '.' + normalized.substr(pkgName.length);
-                        var mapped = applyMap(pkg.map, subPath) || defaultExtension && applyMap(pkg.map, subPath + defaultExtension);
-                        if (mapped)
-                            normalized = mapped.substr(0, 2) == './' ? pkgName + mapped.substr(1) : mapped;
-                        else
-                            normalized += defaultExtension;
+                                    if ('defaultExtension' in pkg) {
+                                        if (pkg.defaultExtension !== false && normalized.split('/').pop().indexOf('.') == -1)
+                                            defaultExtension = '.' + pkg.defaultExtension;
+                                    }
+                                    // apply defaultJSExtensions if defaultExtension not set
+                                    else if (defaultJSExtension) {
+                                        defaultExtension = '.js';
+                                    }
+                                }
+
+                                // apply submap checking without then with defaultExtension
+                                var subPath = '.' + normalized.substr(pkgName.length);
+                                var mapped = applyMap(pkg.map, subPath) || defaultExtension && applyMap(pkg.map, subPath + defaultExtension);
+                                if (mapped)
+                                    normalized = mapped.substr(0, 2) == './' ? pkgName + mapped.substr(1) : mapped;
+                                else
+                                    normalized += defaultExtension;
+
+
+                                return normalized;
+                            });
                     }
+
                     // add back defaultJSExtension if not a package
-                    else if (defaultJSExtension) {
+                    if (defaultJSExtension)
                         normalized += '.js';
-                    }
 
                     return normalized;
                 };
             });
-
-            SystemJSLoader.prototype.normalizeSync = SystemJSLoader.prototype.normalize;
 
             hook('locate', function(locate) {
                 return function(load) {
@@ -3167,7 +3228,7 @@
                         ])
                             .then(function(normalized) {
                                 argumentName = normalized[0];
-                                if (defaultExtension)
+                                if (defaultExtension && argumentName.substr(argumentName.length - 3, 3) == '.js')
                                     argumentName = argumentName.substr(0, argumentName.length - 3);
                                 return argumentName + '!' + normalized[1];
                             });
@@ -3617,6 +3678,17 @@
         (function() {
 
             var conditionalRegEx = /#\{[^\}]+\}|#\?.+$/;
+
+            hookConstructor(function(constructor) {
+                return function() {
+                    constructor.call(this);
+
+                    // standard environment module, starting small as backwards-compat matters!
+                    this.set('@system-env', this.newModule({
+                        browser: isBrowser
+                    }));
+                };
+            });
 
             hook('normalize', function(normalize) {
                 return function(name, parentName, parentAddress) {

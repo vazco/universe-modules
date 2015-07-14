@@ -1,6 +1,6 @@
 Package.describe({
     name: 'universe:modules',
-    version: '0.2.1',
+    version: '0.3.0',
     summary: 'Use ES6 / ES2015 modules in Meteor with SystemJS!',
     git: 'https://github.com/vazco/universe-modules',
     documentation: 'README.md'
@@ -12,20 +12,16 @@ Package.registerBuildPlugin({
     sources: ['build-plugin.js']
 });
 
-Npm.depends({
-    'xhr2': '0.1.2'
-});
-
 Package.onUse(function (api) {
 
-    // We need XMLHttpRequest on the server side for SystemJS remote fetching (or SystemJS won't run)
-    // This may change in near future if we find better way to run SystemJS
-    api.addFiles('vendor/xhr2.js', 'server');
+    // we need this for System.js to run on the server side without core changes
+    api.addFiles('require-polyfill.js', 'server');
 
     // Load SystemJS
     api.addFiles([
         'vendor/system-polyfills.js',
-        'vendor/system.js' // There is a core change in this file! Meteor uses `Npm.require` instead of `require`
+        'vendor/system.js',
+        'system-config.js'
     ]);
 
 });

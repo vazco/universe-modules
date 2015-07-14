@@ -1,1 +1,0 @@
-XMLHttpRequest = Npm.require('xhr2');
