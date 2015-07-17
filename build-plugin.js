@@ -13,7 +13,10 @@ var handler = function (compileStep) {
     // add meteor:// protocol to unify behavior between client/server/packages
     moduleId = 'meteor://' + moduleId;
 
-    var extraWhitelist = ['es6.modules'];
+    var extraWhitelist = [
+        'es6.modules',
+        'es7.decorators'
+    ];
     if(path[1] === 'jsx'){
         extraWhitelist.push('react');
     }
