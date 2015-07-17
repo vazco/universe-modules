@@ -14,6 +14,8 @@ Package.registerBuildPlugin({
 
 Package.onUse(function (api) {
 
+    api.imply('babel-runtime@0.1.1');
+
     // we need this for System.js to run on the server side without core changes
     api.addFiles('require-polyfill.js', 'server');
 
