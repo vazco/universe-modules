@@ -1,20 +1,31 @@
-// backup original SystemJS methods
+// Backup original SystemJS methods
 var _System = {
     normalize: System.normalize,
+    normalizeSync: System.normalizeSync,
     locate: System.locate,
     fetch: System.fetch,
     translate: System.translate,
     instantiate: System.instantiate
 };
 
-System.baseURL = 'meteor://';
+// Make `register` the default module format
 System.config({
     meta: {
-        'meteor://*': {
+        '*': {
             format: 'register'
         }
     }
 });
+
+/**
+ * Convert author:package/module to author_package/module
+ * @param {string} name - unnormalized module name with colon
+ * @returns {string} - unnormalized module name without unnecessary colon
+ */
+var normalizeMeteorPackageName = function (name) {
+    // @todo replace this with a regexp
+    return name.replace(':', '_');
+};
 
 /*
  * name: the unnormalized module name
@@ -22,18 +33,26 @@ System.config({
  * parentAddress: the address of the requesting module
  */
 System.normalize = function (name, parentName, parentAddress) {
-    // add meteor prefix
-    if (name[0] !== '.' && name[0] !== '/' && name.indexOf('://') === -1) {
-        name = 'meteor://' + name;
-    }
 
-    // allow foomodule.import syntax in import name
+    // Remove colon from package name
+    name = normalizeMeteorPackageName(name);
+
+    // Allow foomodule.import syntax in import name (TypeScript support)
     if (name.slice(-7) === '.import') {
         name = name.slice(0, -7);
     }
 
-    // load original normalize
+    // Load original normalize
     return _System.normalize.call(this, name, parentName, parentAddress);
+};
+
+/*
+ * name: the unnormalized module name
+ * parentName: the canonical module name for the requesting module
+ * parentAddress: the address of the requesting module
+ */
+System.normalizeSync = function (name, parentName, parentAddress) {
+    return _System.normalizeSync.call(this, normalizeMeteorPackageName(name), parentName, parentAddress);
 };
 
 /*
@@ -59,14 +78,9 @@ System.fetch = function (load) {
         return promise;
     }
 
-    if(load.name.slice(0, 9) !== 'meteor://'){
-        // not our protocol, ignore
-        return promise;
-    }
-
-    // show our warning
+    // Add our warning
     return promise.catch(function (err) {
-        console.warn('[Universe Modules]: Module ' + load.name.slice(9) + ' does not exist! You will probably see other errors in the console because of that.');
+        console.warn('[Universe Modules]: Module ' + load.name.replace(System.baseURL, '') + ' does not exist! You will probably see other errors in the console because of that.');
     });
 };
 

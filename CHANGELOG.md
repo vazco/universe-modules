@@ -1,4 +1,11 @@
 
+## 0.4 (not released yet)
+
+- Better handling of SystemJS module normalization
+- Remove `meteor://` protocol
+- Update `babel-compiler` to 5.8.3_1 
+- Update `babel-runtime` to 0.1.2
+
 ## 0.3
 
 - Update SystemJS to 0.18.4

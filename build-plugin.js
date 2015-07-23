@@ -5,19 +5,18 @@ var handler = function (compileStep) {
     var path = compileStep.inputPath.split('.import.');
     var moduleId = path[0];
 
-    if(compileStep.packageName){
+    if (compileStep.packageName) {
         // inside package, prefix module
         moduleId = compileStep.packageName + '/' + moduleId;
     }
 
-    // add meteor:// protocol to unify behavior between client/server/packages
-    moduleId = 'meteor://' + moduleId;
-
     var extraWhitelist = [
         'es6.modules',
+        // @todo make this configurable:
         'es7.decorators'
     ];
-    if(path[1] === 'jsx'){
+    if (path[1] === 'jsx') {
+        // add support for React in *.import.jsx files
         extraWhitelist.push('react');
     }
 
