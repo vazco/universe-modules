@@ -1,6 +1,6 @@
 Package.describe({
     name: 'universe:modules',
-    version: '0.3.0',
+    version: '0.4.0',
     summary: 'Use ES6 / ES2015 modules in Meteor with SystemJS!',
     git: 'https://github.com/vazco/universe-modules',
     documentation: 'README.md'
@@ -8,15 +8,16 @@ Package.describe({
 
 Package.registerBuildPlugin({
     name: 'UniverseModulesBuilder',
-    use: ['babel-compiler@5.6.15'],
+    use: ['babel-compiler@5.8.3_1'],
     sources: ['build-plugin.js']
 });
 
 Package.onUse(function (api) {
 
-    api.imply('babel-runtime@0.1.1');
+    // Babel runtime is required for some compiled syntax to work
+    api.imply('babel-runtime@0.1.2');
 
-    // we need this for System.js to run on the server side without core changes
+    // We need `require` for System.js to run on the server
     api.addFiles('require-polyfill.js', 'server');
 
     // Load SystemJS
