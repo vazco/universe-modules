@@ -1,9 +1,10 @@
 
-## 0.4 (not released yet)
+## 0.4
 
-- Introduce new syntax for importing modules from packages (compatible with MDG less/stylus import syntax)
+- Introduce new syntax `{author:package}/foo` for importing modules from packages (compatible with MDG less/stylus import syntax)
 - Provide backward compatibility with warning message for previous syntax
 - Better handling of SystemJS module normalization
+- Support for System map/packages api with `System.normalizeSync`
 - Remove `meteor://` protocol
 - Update `babel-compiler` to 5.8.3_1 
 - Update `babel-runtime` to 0.1.2

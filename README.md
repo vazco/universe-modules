@@ -1,6 +1,29 @@
 # Universe Modules
 
-### Use ES6 / ES2015 modules in Meteor today!
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+
+- [Use ES6 / ES2015 modules in Meteor today!](#use-es6--es2015-modules-in-meteor-today)
+  - [Benefits of this approach](#benefits-of-this-approach)
+- [Installation](#installation)
+- [Usage](#usage)
+  - [Complete app example](#complete-app-example)
+  - [Basic usage](#basic-usage)
+  - [Loading modules from packages](#loading-modules-from-packages)
+- [SystemJS API](#systemjs-api)
+  - [Setting nice module names](#setting-nice-module-names)
+  - [SystemJS packages](#systemjs-packages)
+- [Troubleshooting](#troubleshooting)
+  - [Module XXX does not exist!](#module-xxx-does-not-exist)
+- [About](#about)
+  - [Roadmap](#roadmap)
+  - [Changelog](#changelog)
+  - [Copyright and license](#copyright-and-license)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+## Use ES6 / ES2015 modules in Meteor today!
 
 You can read more about new JavaScript modules and see some examples at [JSModules.io](http://jsmodules.io) or [2ality](http://www.2ality.com/2014/09/es6-modules-final.html)
 
@@ -16,19 +39,15 @@ Under the hood [Babel.js](https://babeljs.io) and [SystemJS](https://github.com/
 
 *This package adds SystemJS to your project.*
 
-## Benefits of this approach
+### Benefits of this approach
 
 Universe Modules allows you to write your code in modular way, something that Meteor lacks by default.
+You also don't have to worry so much about file loading order.
 
 This is especially useful when working with React - creating lots of new components don't have to pollute global namespace.
 Also code is much simpler to reason about, and syntax is more friendly.
  
 Code you write inside `*.import.js(x)` is compiled using Babel, so **you can also use other ES2015 features!** 
-
-#### Roadmap
-
-In the future we can add loading assets from external sources, e.g. you won't have to include all your modules in main Meteor bundle.
-Some files (e.g. admin panel) could be loaded on demand, reducing initial load time.
 
 ## Installation
 
@@ -96,11 +115,13 @@ e.g. `client/components/finalComponent`.
 
 ### Loading modules from packages
 
-To load files from packages prefix path with full package name, e.g:
+To load files from packages prefix path with full package name in brackets, e.g:
 
-    import Lib from 'author:package/lib' 
+    import Lib from '{author:package}/lib'
+    
+This syntax will be also introduced in Meteor 1.2 to allow importing less/stylus files between packages.
 
-Some Meteor packages are compatible with Universe Modules and also register nice module names in SystemJS
+Packages can also register nice module names in SystemJS.
 
 An example could be [universe:react-bootstrap](https://atmospherejs.com/universe/react-bootstrap).
 Once added to Meteor project, you can write:
@@ -109,32 +130,82 @@ Once added to Meteor project, you can write:
 
 and use components from [ReactBootstrap](https://react-bootstrap.github.io/) packaged for Meteor projects.
 
-### SystemJS API
+## SystemJS API
 
-More about SystemJS API can be found [on their Github documentation](https://github.com/systemjs/systemjs/blob/master/docs/system-api.md)
+Full SystemJS API docs can be found [on their Github repo](https://github.com/systemjs/systemjs/blob/master/docs/system-api.md)
 
-#### Setting nice module names
+### Setting nice module names
 
-You can set alternative name for a module, below is an example from `universe:react-bootstrap` package:
+You can map alternative name for a module, but remember that you have to provide normalized name as param:
 
+    // some_config_file.js
     System.config({
         map: {
-            bootstrap: 'universe:react-bootstrap/main'
+            myComponent: System.normalizeSync('normal/path/to/my/component')
         }
     });
 
+    // some_component.import.js
+    import myComponent from 'myComponent'; // this will load component from normal/path/to/my/component
+
+### SystemJS packages
+
+SystemJS has a packages concept that plays well with Meteor idea of packages.
+
+Example usage from [universe:react-bootstrap](https://atmospherejs.com/universe/react-bootstrap):
+
+    System.config({
+        packages: {
+            bootstrap: {
+                main: 'main',
+                format: 'register',
+                map: {
+                    '.': System.normalizeSync('{universe:react-bootstrap}')
+                }
+            }
+        }
+    });
+
+This will map:
+
+- `bootstrap` -> `{universe:react-bootstrap}/main` (main is set as a default by... `main` config option :))
+- `bootstrap/foo` -> `{universe:react-bootstrap}/foo`
+- `bootstrap/foo/bar` -> `{universe:react-bootstrap}/foo/bar`
+
+etc...
 
 ## Troubleshooting
 
-#### `[Universe Modules]: Module XXX does not exist!`
+### Module XXX does not exist!
 
 You misspelled import name/path. SystemJS tries to download this file from remote location and fails.
 
 Check if all files are at their location and import paths are OK.
 
+Unfortunately file loading order is still important!
+
+You need to be sure that all `XXX.import.js` files you want to use are loaded before executing `System.import('XXX')`.  
+This normally isn't a issue as putting them into subdirectory is enough (it doesn't have to be a `lib`!)
+
+You also don't have to worry about this when using `import` inside `*.import.js` files - modules will be loaded correctly regardless of file loading order. 
 
 
-----
+## About
 
-> This package is part of [Universe](http://unicms.io), a framework based on [Meteor platform](http://meteor.com) maintained by [Vazco](http://www.vazco.eu).
-> It works as standalone Meteor package, but you can get much more features when using the whole system.
+### Roadmap
+
+- [] Full tests coverage
+- [] Allow opt-in for other Babel modules (decorators etc) 
+- [] Support for lazy loading modules on the client instead of bundling them with main Meteor app
+
+### Changelog
+
+You can find changelog in CHANGELOG.md file.
+
+### Copyright and license
+
+Code and documentation &copy; 2015 [Vazco.eu](http://vazco.eu)
+Released under the MIT license. 
+
+This package is part of [Universe](http://unicms.io), a package ecosystem based on [Meteor platform](http://meteor.com) maintained by [Vazco](http://www.vazco.eu).
+It works as standalone Meteor package, but you can get much more features when using the whole system.

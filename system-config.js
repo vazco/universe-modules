@@ -59,11 +59,7 @@ System.normalize = function (name, parentName, parentAddress) {
     }
 
     // Load original normalize
-    return _System.normalize.call(this, normalizeMeteorPackageName(name), parentName, parentAddress)
-        .then(function (normalizedName) {
-            console.log('normalize', name, '->', normalizedName);
-            return normalizedName;
-        });
+    return _System.normalize.call(this, normalizeMeteorPackageName(name), parentName, parentAddress);
 };
 
 /*
@@ -71,9 +67,7 @@ System.normalize = function (name, parentName, parentAddress) {
  * parentName: the canonical module name for the requesting module
  */
 System.normalizeSync = function (name, parentName) {
-    var normalizedName = _System.normalizeSync.call(this, normalizeMeteorPackageName(name), parentName);
-    console.log('normalizeSync', name, '->', normalizedName);
-    return normalizedName;
+    return _System.normalizeSync.call(this, normalizeMeteorPackageName(name), parentName);
 };
 
 /*
