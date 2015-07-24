@@ -19,6 +19,7 @@
 - [About](#about)
   - [Roadmap](#roadmap)
   - [Changelog](#changelog)
+  - [Issues](#issues)
   - [Copyright and license](#copyright-and-license)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -194,13 +195,17 @@ You also don't have to worry about this when using `import` inside `*.import.js`
 
 ### Roadmap
 
-- [] Full tests coverage
-- [] Allow opt-in for other Babel modules (decorators etc) 
-- [] Support for lazy loading modules on the client instead of bundling them with main Meteor app
+- [ ] Full tests coverage
+- [ ] Allow opt-in for other Babel modules (decorators etc) 
+- [ ] Support for lazy loading modules on the client instead of bundling them with main Meteor app
 
 ### Changelog
 
 You can find changelog in CHANGELOG.md file.
+
+### Issues
+
+Please report all found issues on [GitHub issue tracker](https://github.com/vazco/universe-modules/issues) 
 
 ### Copyright and license
 
