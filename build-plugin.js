@@ -7,7 +7,7 @@ var handler = function (compileStep) {
 
     if (compileStep.packageName) {
         // inside package, prefix module
-        moduleId = compileStep.packageName + '/' + moduleId;
+        moduleId = '{' + compileStep.packageName + '}/' + moduleId;
     }
 
     var extraWhitelist = [

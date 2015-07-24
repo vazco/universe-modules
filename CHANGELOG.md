@@ -1,6 +1,8 @@
 
 ## 0.4 (not released yet)
 
+- Introduce new syntax for importing modules from packages (compatible with MDG less/stylus import syntax)
+- Provide backward compatibility with warning message for previous syntax
 - Better handling of SystemJS module normalization
 - Remove `meteor://` protocol
 - Update `babel-compiler` to 5.8.3_1 
