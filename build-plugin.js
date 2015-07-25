@@ -5,6 +5,11 @@ var handler = function (compileStep) {
     var path = compileStep.inputPath.split('.import.');
     var moduleId = path[0];
 
+    if(process.platform === 'win32') {
+        // windows support, replace backslashes with forward slashes
+        moduleId = moduleId.replace(/\\/g, '/');
+    }
+
     if (compileStep.packageName) {
         // inside package, prefix module
         moduleId = '{' + compileStep.packageName + '}/' + moduleId;
