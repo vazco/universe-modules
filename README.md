@@ -1,3 +1,4 @@
+<img src="http://uniproject.vazco.eu/black_logo.png" />
 # Universe Modules
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
