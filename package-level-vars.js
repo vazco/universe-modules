@@ -1,17 +1,15 @@
 /**
  * Following script, adds possibility of import of exported variables from packages
- * @example import {UniCollection, UniUsers} from 'packages/vazco:universe-collection'
- * import {DDP} from 'packages/ddp'
+ * @example import {UniCollection, UniUsers} from '{vazco:universe-collection}!vars'
+ * import {DDP} from '{ddp}!vars'
  */
-
-//pass: packages:ddp & packages/universe:collection
-var packageRegex = /^packages\/((?:[\w-]+$)|(?:[\w-]+:[\w-]+$))/;
+var packageRegex = /^{\s*([\w-]*?):?([\w-]+)\s*}\s*!vars$/;
 var _normalize = System.normalize;
 
 System.normalize = function (name) {
     var packageName;
     if (packageRegex.test(name)) {
-        packageName = name.replace('packages/', '');
+        packageName = name.replace(packageRegex, '$1');
         if (Package[packageName]) {
             //Getting access for exported variables by meteor package
             System.registerDynamic(name, [], true, function (require, exports, module) {

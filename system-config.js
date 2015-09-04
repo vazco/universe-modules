@@ -19,7 +19,7 @@ System.config({
 
 // Regular expressions for Meteor package import syntax
 var appRegex = /^\{}\//;
-var packageRegex = /^{([\w-]*?):?([\w-]+)}/;
+var packageRegex = /^{\s*([\w-]*?):?([\w-]+)\s*}/;
 var packageRegexBC = /^([\w-]+):([\w-]+)/;
 
 /**
@@ -34,7 +34,7 @@ var normalizeMeteorPackageName = function (name) {
         .replace(appRegex, '') // {}/foo -> foo
         .replace(packageRegex, '__$1_$2'); // {author:package}/foo -> __author_package/foo
 
-    if(packageRegexBC.test(name)){
+    if (packageRegexBC.test(name)) {
         // provide temporary backward compatibility for versions < 0.4 package syntax
         console.warn([
             '[Universe Modules]',

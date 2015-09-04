@@ -131,12 +131,12 @@ Once added to Meteor project, you can write:
 
 and use components from [ReactBootstrap](https://react-bootstrap.github.io/) packaged for Meteor projects.
 
-### Loading package-level variable
+### Loading package-level variables
 To load exported variables by meteor package, prefix package name by 'packages/' e.g:
 
 ```
-import {DDP} from 'packages/ddp'
-import {UniCollection, UniUsers} from 'packages/vazco:universe-collection'
+import {DDP} from '{ddp}!vars'
+import {UniCollection, UniUsers} from '{vazco:universe-collection}!vars'
 ```
 be sure that if you use import from another package, you must have dependency to this package.
 
