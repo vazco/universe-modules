@@ -132,7 +132,7 @@ Once added to Meteor project, you can write:
 and use components from [ReactBootstrap](https://react-bootstrap.github.io/) packaged for Meteor projects.
 
 ### Loading package-level variables
-To load exported variables by meteor package, prefix package name by 'packages/' e.g:
+To load exported variables by meteor package, prefix package name like before and add `!vars` on the end(after bracket):
 
 ```
 import {DDP} from '{ddp}!vars'
