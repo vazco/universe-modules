@@ -19,7 +19,7 @@ System.config({
 
 // Regular expressions for Meteor package import syntax
 var appRegex = /^\{}\//;
-var packageRegex = /^{\s*([\w-]*?):?([\w-]+)\s*}/;
+var packageRegex = /^{([\w-]*?):?([\w-]+)}/;
 var packageRegexBC = /^([\w-]+):([\w-]+)/;
 
 /**

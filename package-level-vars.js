@@ -3,7 +3,7 @@
  * @example import {UniCollection, UniUsers} from '{vazco:universe-collection}!vars'
  * import {DDP} from '{ddp}!vars'
  */
-var packageRegex = /^{\s*([\w-]*?):?([\w-]+)\s*}\s*!vars$/;
+var packageRegex = /^{((?:[\w-]*?):?(?:[\w-]+))}!vars$/;
 var _normalize = System.normalize;
 
 System.normalize = function (name) {
