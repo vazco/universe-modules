@@ -94,8 +94,9 @@ System.fetch = function (load) {
     }
 
     // Add our warning
-    return promise.catch(function (err) {
+    return promise.catch(function () {
         console.warn('[Universe Modules]: Module ' + load.name.replace(System.baseURL, '') + ' does not exist! You will probably see other errors in the console because of that.');
+
     });
 };
 
