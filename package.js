@@ -1,6 +1,6 @@
 Package.describe({
     name: 'universe:modules',
-    version: '0.4.1',
+    version: '0.4.2',
     summary: 'Use ES6 / ES2015 modules in Meteor with SystemJS!',
     git: 'https://github.com/vazco/universe-modules',
     documentation: 'README.md'
@@ -24,7 +24,8 @@ Package.onUse(function (api) {
     api.addFiles([
         'vendor/system-polyfills.js',
         'vendor/system.js',
-        'system-config.js'
+        'system-config.js',
+        'package-level-vars.js'
     ]);
 
 });

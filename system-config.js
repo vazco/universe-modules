@@ -34,7 +34,7 @@ var normalizeMeteorPackageName = function (name) {
         .replace(appRegex, '') // {}/foo -> foo
         .replace(packageRegex, '__$1_$2'); // {author:package}/foo -> __author_package/foo
 
-    if(packageRegexBC.test(name)){
+    if (packageRegexBC.test(name)) {
         // provide temporary backward compatibility for versions < 0.4 package syntax
         console.warn([
             '[Universe Modules]',
@@ -94,8 +94,9 @@ System.fetch = function (load) {
     }
 
     // Add our warning
-    return promise.catch(function (err) {
+    return promise.catch(function () {
         console.warn('[Universe Modules]: Module ' + load.name.replace(System.baseURL, '') + ' does not exist! You will probably see other errors in the console because of that.');
+
     });
 };
 
