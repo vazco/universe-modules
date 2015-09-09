@@ -12,6 +12,8 @@
   - [Complete app example](#complete-app-example)
   - [Basic usage](#basic-usage)
   - [Loading modules from packages](#loading-modules-from-packages)
+  - [Loading package-level variables](#user-content-loading-package-level-variables)
+  - [Loading from npm repository](#user-content-loading-from-npm-repository)
 - [SystemJS API](#systemjs-api)
   - [Setting nice module names](#setting-nice-module-names)
   - [SystemJS packages](#systemjs-packages)
@@ -140,6 +142,10 @@ import {DDP} from '{ddp}!vars'
 import {UniCollection, UniUsers} from '{vazco:universe-collection}!vars'
 ```
 be sure that if you use import from another package, you must have dependency to this package.
+
+### Loading from npm repository
+There is extension for this package that adds a possibility of importing from npm repositories.
+[universe:modules-npm](https://atmospherejs.com/universe/modules-npm) / [Github repo](https://github.com/vazco/meteor-universe-modules-npm/)
 
 ## SystemJS API
 
