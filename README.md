@@ -1,4 +1,5 @@
-<img src="http://uniproject.vazco.eu/black_logo.png" />
+<a href="http://unicms.io"><img src="http://unicms.io/banners/standalone.png" /></a>
+
 # Universe Modules
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
