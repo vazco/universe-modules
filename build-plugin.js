@@ -18,7 +18,8 @@ var handler = function (compileStep) {
     var extraWhitelist = [
         'es6.modules',
         // @todo make this configurable:
-        'es7.decorators'
+        'es7.decorators',
+        'regenerator'
     ];
     if (path[1] === 'jsx') {
         // add support for React in *.import.jsx files
