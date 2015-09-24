@@ -1,4 +1,5 @@
-<img src="http://uniproject.vazco.eu/black_logo.png" />
+<a href="http://unicms.io"><img src="http://unicms.io/banners/standalone.png" /></a>
+
 # Universe Modules
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
@@ -66,7 +67,7 @@ Just add this package to your app:
 
 If you want to see it in action, see our todo example app:
 
-- Source code: https://github.com/vazco/demo_modules
+- Source code: https://github.com/vazco/demo_modules (note: this example is little outdated and will be updated soon)
 - Live demo: http://universe-modules-demo.meteor.com
 
 You can also check out great `meteor-react-example` app by [optilude](https://github.com/optilude).
@@ -121,29 +122,23 @@ e.g. `client/components/finalComponent`.
 
 To load files from packages prefix path with full package name in brackets, e.g:
 
-    import Lib from '{author:package}/lib'
+    import foo from '{author:package}/foo'
     
 This syntax will be also introduced in Meteor 1.2 to allow importing less/stylus files between packages.
 
-Packages can also register nice module names in SystemJS.
-
-An example could be [universe:react-bootstrap](https://atmospherejs.com/universe/react-bootstrap).
-Once added to Meteor project, you can write:
-
-    import { Button } from 'bootstrap';
-
-and use components from [ReactBootstrap](https://react-bootstrap.github.io/) packaged for Meteor projects.
-
 ### Loading package-level variables
-To load exported variables by meteor package, prefix package name like before and add `!vars` on the end(after bracket):
+
+To load variables exported by Meteor package, add `!exports` after package name in brackets:
 
 ```
-import {DDP} from '{ddp}!vars'
-import {UniCollection, UniUsers} from '{vazco:universe-collection}!vars'
+import {DDP} from '{ddp}!exports'
+import {UniCollection, UniUsers} from '{universe:collection}!exports'
 ```
-be sure that if you use import from another package, you must have dependency to this package.
+
+Remember that if you want to import from another package, you must have dependency on this package.
 
 ### Loading from npm repository
+
 There is extension for this package that adds a possibility of importing from npm repositories.
 [universe:modules-npm](https://atmospherejs.com/universe/modules-npm) / [Github repo](https://github.com/vazco/meteor-universe-modules-npm/)
 
@@ -169,15 +164,15 @@ You can map alternative name for a module, but remember that you have to provide
 
 SystemJS has a packages concept that plays well with Meteor idea of packages.
 
-Example usage from [universe:react-bootstrap](https://atmospherejs.com/universe/react-bootstrap):
+Example usage:
 
     System.config({
         packages: {
-            bootstrap: {
-                main: 'main',
+            myPackage: {
+                main: 'index',
                 format: 'register',
                 map: {
-                    '.': System.normalizeSync('{universe:react-bootstrap}')
+                    '.': System.normalizeSync('{me:my-package}')
                 }
             }
         }
@@ -185,9 +180,9 @@ Example usage from [universe:react-bootstrap](https://atmospherejs.com/universe/
 
 This will map:
 
-- `bootstrap` -> `{universe:react-bootstrap}/main` (main is set as a default by... `main` config option :))
-- `bootstrap/foo` -> `{universe:react-bootstrap}/foo`
-- `bootstrap/foo/bar` -> `{universe:react-bootstrap}/foo/bar`
+- `myPackage` -> `{me:my-package}/index` (index is set as a default by `main` config option)
+- `myPackage/foo` -> `{me:my-package}/foo`
+- `myPackage/foo/bar` -> `{me:my-package}/foo/bar`
 
 etc...
 
@@ -199,7 +194,7 @@ You misspelled import name/path. SystemJS tries to download this file from remot
 
 Check if all files are at their location and import paths are OK.
 
-Unfortunately file loading order is still important!
+**Unfortunately file loading order is still important!**
 
 You need to be sure that all `XXX.import.js` files you want to use are loaded before executing `System.import('XXX')`.  
 This normally isn't a issue as putting them into subdirectory is enough (it doesn't have to be a `lib`!)
@@ -211,13 +206,13 @@ You also don't have to worry about this when using `import` inside `*.import.js`
 
 ### Roadmap
 
-- [ ] Full tests coverage
 - [ ] Allow opt-in for other Babel modules (decorators etc) 
 - [ ] Support for lazy loading modules on the client instead of bundling them with main Meteor app
+- [ ] Full tests coverage
 
 ### Changelog
 
-You can find changelog in CHANGELOG.md file.
+You can find changelog and breaking changes in CHANGELOG.md file.
 
 ### Issues
 
