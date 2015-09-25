@@ -1,23 +1,27 @@
-/**
- * Following script allows to import variables exported from packages
- * @example import {UniCollection, UniUsers} from '{universe:collection}!exports'
- * import {DDP} from '{ddp}!exports'
+/*
+ * Following script allows to import variables exported from Meteor packages
+ * @example `import {UniCollection, UniUsers} from '{universe:collection}!exports'`
+ * @example `import {DDP} from '{ddp}!exports'`
  */
-var packageRegex = /^\/modules\/packages\/([\w-]*?)\/([\w-]+)!exports$/;
 
-const {locate} = System;
+System.set('exports', System.newModule({
+    fetch() {
+        // we don't need to fetch anything for this to work
+        return '';
+    },
+    instantiate ({name}) {
+        return new Promise((resolve, reject) => {
+            // grab author and package name
+            let [, author, packageName] = /^\/_modules_\/packages\/([\w-]*?)\/([\w-]+)!exports$/.exec(name);
+            let fullPackageName = (author ? author + ':' : '') + packageName;
 
-System.locate = function (data) {
-    console.info('locate', data);
-    if (packageRegex.test(data.name)) {
-        console.warn('inside', data.name);
-        let packageName = data.name.replace(packageRegex, '$1:$2');
-        if (Package[packageName]) {
-            //Getting access for exported variables by meteor package
-            System.registerDynamic(data, [], true, function (require, exports, module) {
-                module.exports = Package[packageName];
-            });
-        }
+            if (Package[fullPackageName]) {
+                // yay we got a package!
+                resolve(Package[fullPackageName]);
+            } else {
+                // there is no such package
+                reject(new Error(`[Universe Modules]: Cannot find Meteor package exports for {${fullPackageName}}`));
+            }
+        });
     }
-    return locate.apply(this, arguments);
-};
+}));

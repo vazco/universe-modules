@@ -91,8 +91,6 @@ System.normalize = function (name, parentName, parentAddress) {
         name = name.slice(0, -7);
     }
 
-    console.log('normalize', name, parentName, '->', convertMeteorModuleName(name, parentName));
-
     // Load original normalize
     return normalize.call(this, convertMeteorModuleName(name, parentName), parentName, parentAddress);
 };
@@ -102,7 +100,6 @@ System.normalize = function (name, parentName, parentAddress) {
  * parentName: the canonical module name for the requesting module
  */
 System.normalizeSync = function (name, parentName) {
-    console.log('normalizeSync', name, parentName, '->', convertMeteorModuleName(name, parentName));
     return normalizeSync.call(this, convertMeteorModuleName(name, parentName), parentName);
 };
 
@@ -122,7 +119,11 @@ System.normalizeSync = function (name, parentName) {
  *   can be modified
  */
 System.fetch = function (load) {
+    //console.log('fetch', load);
+
     var promise = fetch.call(this, load);
+
+    //console.log('promise', promise, typeof promise);
 
     if (!promise) {
         // not really a promise
