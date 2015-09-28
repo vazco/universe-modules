@@ -12,7 +12,7 @@ const {
 // Make `register` the default module format
 System.config({
     meta: {
-        '*': {
+        '/_modules_/*': {
             format: 'register'
         }
     }
@@ -109,7 +109,7 @@ System.normalizeSync = function (name, parentName) {
  *   derived metadata for reference in other hooks
  */
 //System.locate = function (load) {
-//    return _System.locate.call(this, load);
+//    return locate.call(this, load);
 //};
 
 /*
@@ -119,20 +119,21 @@ System.normalizeSync = function (name, parentName) {
  *   can be modified
  */
 System.fetch = function (load) {
-    //console.log('fetch', load);
+    return new Promise((resolve, reject) => {
+        var response = fetch.call(this, load);
 
-    var promise = fetch.call(this, load);
+        if (response instanceof Promise) {
+            // we got a promise, so there must be some fetching in progress
 
-    //console.log('promise', promise, typeof promise);
+            response.then(resolve, err => {
+                // in case of error show our message
+                reject(new Error(`[Universe Modules]: There was an error while fetching module "${load.name.replace(/\/_modules_\/[^\/]*/, '')}". Are you sure that this module exists? Expand for more info:\n\tOriginal error: ${err}`));
+            })
 
-    if (!promise) {
-        // not really a promise
-        return promise;
-    }
-
-    // Add our warning
-    return promise.catch(function () {
-        console.warn('[Universe Modules]: Module ' + load.name.replace(System.baseURL, '') + ' does not exist! You will probably see other errors in the console because of that.');
+        } else {
+            // not a promise, return what we got
+            resolve(response);
+        }
     });
 };
 
