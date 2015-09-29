@@ -13,8 +13,7 @@
 - Update `SystemJS` to 0.19.0
 - Use Meteor Promise polyfill instead of this shipped with SystemJS
 - Improve error handling (stack traces are now easier to read when errors are thrown inside module)
-- Update `babel-compiler` to x
-- Update `babel-runtime` to x
+- Update `babel-compiler` to 5.8.24_1
 
 ## 0.4
 

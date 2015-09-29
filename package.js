@@ -8,7 +8,7 @@ Package.describe({
 
 Package.registerBuildPlugin({
     name: 'compile-universe-modules',
-    use: ['babel-compiler', 'ecmascript', 'underscore'],
+    use: ['babel-compiler@5.8.24_1', 'ecmascript', 'underscore@1.0.4'],
     sources: ['build-plugin.js']
 });
 
