@@ -41,5 +41,21 @@ Package.onUse(function (api) {
 });
 
 Package.onTest(function (api) {
-    // @todo: Write some tests
+
+    api.use([
+        'meteor',
+        'mongo',
+        'minimongo',
+        'tinytest',
+        'promise',
+        'ecmascript',
+        'universe:modules'
+    ]);
+
+    api.addFiles([
+        'tests/test_modules/file1.import.js'
+    ]);
+
+    api.addFiles('tests/tests.js');
+
 });

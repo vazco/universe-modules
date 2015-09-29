@@ -158,6 +158,8 @@ System.fetch = function (load) {
 /*
  * Wrap system.import and add default error reporting
  */
-System.import = function (...args) {
-    return importFn.call(this, ...args).catch(console.error.bind(console));
+System.import = function () {
+    var promise = importFn.apply(this, arguments);
+    promise.catch(console.error.bind(console));
+    return promise;
 };
