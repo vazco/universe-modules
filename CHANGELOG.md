@@ -10,6 +10,7 @@
 
 - Change in internal module naming (Potentially breaking change)
 - Make use of new build plugins API
+- Option to import file only on selected platform with `@client` `@server` syntax
 - Update `SystemJS` to 0.19.0
 - Use Meteor Promise polyfill instead of this shipped with SystemJS
 - Improve error handling (stack traces are now easier to read when errors are thrown inside module)
