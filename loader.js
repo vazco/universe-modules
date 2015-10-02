@@ -68,9 +68,9 @@ const normalizeModuleName = function normalizeModuleName (name, parentName) {
 
         return name
             // main app file
-            .replace(this.appRegex, '/_modules_/app/') // {}/foo -> /_modules_/app/foo
+            .replace(appRegex, '/_modules_/app/') // {}/foo -> /_modules_/app/foo
             // package file
-            .replace(this.packageRegex, '/_modules_/packages/$1/$2'); // {author:package}/foo -> /_modules_/packages/author/package/foo
+            .replace(packageRegex, '/_modules_/packages/$1/$2'); // {author:package}/foo -> /_modules_/packages/author/package/foo
 
     } else {
         // Other syntax, maybe relative path, leave it as is
