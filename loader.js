@@ -18,8 +18,10 @@ System.config({
 // Few useful regular expressions
 const appRegex = /^\{}\//;
 const packageRegex = /^{([\w-]*?):?([\w-]+)}/;
+const onlyPackageRegex = /^{([\w-]*?):?([\w-]+)}$/;
 const normalizedRegex = /^\/_modules_\//;
 const selectedPlatformRegex = /@(client|server)$/;
+const endsWithSlashRegex = /\/$/;
 
 
 /**
@@ -27,6 +29,7 @@ const selectedPlatformRegex = /@(client|server)$/;
  * The `/_modules_/packages/abc/xyz/` syntax in an internal implementation that is subject to change!
  * You should never rely on it!
  * @param {string} name - friendly module name with Meteor package syntax
+ * @param {string} [parentName] - normalized calling module name
  * @returns {string} - real module name
  */
 const normalizeModuleName = function normalizeModuleName (name, parentName) {
@@ -38,6 +41,8 @@ const normalizeModuleName = function normalizeModuleName (name, parentName) {
             return name;
         }
 
+        name = name.replace(endsWithSlashRegex, '/index'); // if name is a directory then load index module
+
         if (parentName) {
 
             let [, dir, type, author, packageName] = parentName.split('/');
@@ -46,16 +51,17 @@ const normalizeModuleName = function normalizeModuleName (name, parentName) {
                 // invalid parent name, not our module!
                 throw new Error(`[Universe Modules]: Invalid parent while loading module from absolute path: ${name} - ${parentName}`);
             }
+
             if (type === 'app') {
                 // inside app
                 return '/_modules_/app' + name;
             } else if (type === 'packages') {
                 // inside a package
                 return `/_modules_/packages/${author}/${packageName}${name}`;
-            } else {
-                // invalid type
-                throw new Error(`[Universe Modules]: Cannot determine parent when loading module from absolute path: ${name} - ${parentName}`);
             }
+
+            // invalid type
+            throw new Error(`[Universe Modules]: Cannot determine parent when loading module from absolute path: ${name} - ${parentName}`);
 
         } else {
             // no parent provided, treat it as an app module, default behaviour
@@ -68,9 +74,16 @@ const normalizeModuleName = function normalizeModuleName (name, parentName) {
 
         return name
             // main app file
-            .replace(this.appRegex, '/_modules_/app/') // {}/foo -> /_modules_/app/foo
+            .replace(appRegex, '/_modules_/app/') // {}/foo -> /_modules_/app/foo
+
+            // only package name, import index file
+            .replace(onlyPackageRegex, '/_modules_/packages/$1/$2/index') // {author:package} -> /_modules_/packages/author/package/index
+
             // package file
-            .replace(this.packageRegex, '/_modules_/packages/$1/$2'); // {author:package}/foo -> /_modules_/packages/author/package/foo
+            .replace(packageRegex, '/_modules_/packages/$1/$2') // {author:package}/foo -> /_modules_/packages/author/package/foo
+
+            // link to index if a directory
+            .replace(endsWithSlashRegex, '/index'); // /_modules_/packages/author/package/foo/ -> /_modules_/packages/author/package/foo/index
 
     } else {
         // Other syntax, maybe relative path, leave it as is
@@ -122,9 +135,8 @@ System.normalizeSync = function (name, parentName) {
 };
 
 
-/*
- * Our custom loader
- */
+// Our custom loader
+/* globals UniverseModulesLoader:true */
 UniverseModulesLoader = System.newModule({
     /*
      * locate : ({ name: NormalizedModuleName,
@@ -147,7 +159,7 @@ UniverseModulesLoader = System.newModule({
      * load.address: the URL returned from locate
      * load.metadata: the same metadata object by reference, which can be modified
      */
-    fetch(load){
+    fetch (load) {
         // Fetch will only occur when there is no such module.
         // Because we do not support lazy loading yet, this means that module name is invalid.
         return Promise.reject(`[Universe Modules]: Trying to load module "${load.name.replace(/\/_modules_\/[^\/]*/, '')}" that doesn't exist!`);

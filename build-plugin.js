@@ -34,7 +34,8 @@ class UniverseBabelCompiler extends BabelCompiler {
         const extraWhitelist = [
             'es6.modules',
             // @todo make this configurable:
-            'es7.decorators'
+            'es7.decorators',
+            'regenerator'
         ];
 
         if (ext === 'jsx') {

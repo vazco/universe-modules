@@ -4,16 +4,20 @@
 ### 0.5.0
 
 - [BREAKING CHANGE] Meteor 1.2 is required
-- [BREAKING CHANGE] **All absolute paths to modules must start with `/`**
+- [BREAKING CHANGE] **All non-relative paths to modules must be absolute and start with `/`, `{}` or `{package:name}`**
 - [BREAKING CHANGE] `!vars` was rewritten and replaced by `!exports`
 - [BREAKING CHANGE] Remove backward compatibility for deprecated package syntax `author:package`
+- [BREAKING CHANGE] Remove compatibility for `filename.import` syntax 
 
 - Change in internal module naming (Potentially breaking change)
 - Make use of new build plugins API
 - Option to import file only on selected platform with `@client` `@server` syntax
-- Update `SystemJS` to 0.19.0
+- Loading a directory (ending module name with `/`) will load `index` module from this directory 
+- Providing only package name `{me:my-package}` will load index module from package
 - Use Meteor Promise polyfill instead of this shipped with SystemJS
 - Improve error handling (stack traces are now easier to read when errors are thrown inside module)
+- Provide loader as a module instead of overwriting System's methods (but we still overwrite import, normalize etc.)
+- Update `SystemJS` to 0.19.0
 - Update `babel-compiler` to 5.8.24_1
 
 ## 0.4

@@ -60,6 +60,27 @@ Just add this package to your app:
 
     meteor add universe:modules
 
+### Upgrading from 0.4 to 0.5
+
+Version 0.5 introduces some breaking changes, and most probably your app won't work out of the box.
+For more details check CHANGELOG.md
+
+If after upgrade you got error `RangeError: Maximum call stack size exceeded` it can be caused by invalid System's package config.
+There is no more need for syntax like:
+```
+System.config({
+    packages: {
+        '{me:my-package}': {
+            main: 'index',
+            format: 'register',
+            map: {
+                '.': System.normalizeSync('{me:my-package}')
+            }
+        }
+    }
+});
+```
+Instead, index module will be loaded by default if you pass only package syntax, or if you end module name with `/` (you will link to directory and not a file)
 
 ## Usage
 
