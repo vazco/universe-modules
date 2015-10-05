@@ -65,6 +65,8 @@ Just add this package to your app:
 Version 0.5 introduces some breaking changes, and most probably your app won't work out of the box.
 For more details check CHANGELOG.md
 
+All paths need to be either absolute (starting with `/`, `{}/`, `{author:package}` etc.) or relative (starting with `./`, `../` etc.)
+
 If after upgrade you got error `RangeError: Maximum call stack size exceeded` it can be caused by invalid System's package config.
 There is no more need for syntax like:
 ```
@@ -80,7 +82,7 @@ System.config({
     }
 });
 ```
-Instead, index module will be loaded by default if you pass only package syntax, or if you end module name with `/` (you will link to directory and not a file)
+Instead, index module will be loaded by default if you pass only package name inside brackets, or if you end module name with `/` (you will link to directory and not a file)
 
 ## Usage
 
@@ -124,7 +126,7 @@ If you want to execute this inside Meteor app, you need to use SystemJS API:
 
 Some normal `file.js`:
 
-    System.import('finalComponent').then(function(module){
+    System.import('/finalComponent').then(function(module){
     
         // default export is attached as default property
         // all named exports are attached by their name
@@ -135,21 +137,36 @@ Some normal `file.js`:
     });
 
 This assumes that file `finalComponent.import.js` is inside main app directory.  
-If you have it somewhere else you have to provide full path relative to meteor app directory,
-e.g. `client/components/finalComponent`.
+If you have it somewhere else you have to provide full path starting with meteor app directory,
+e.g. `/client/components/finalComponent`.
 
+
+### Loading file only on the client or server
+
+Because ES2015 specification won't allow you to write `import` statements inside a condition, you cannot import file selectively only on client or server.
+
+In some cases this could be useful, so we introduced syntax that will allow you to do it. Just add `@client` or `@server` suffix after module name.
+On selected platform this will behave like normal import, on the other platform import will return empty module, so every imported variable will be undefined.
 
 ### Loading modules from packages
 
 To load files from packages prefix path with full package name in brackets, e.g:
 
+    import foo from '{author:package}'
+
+to load index file from package, or to load selected module:
+
     import foo from '{author:package}/foo'
     
-This syntax will be also introduced in Meteor 1.2 to allow importing less/stylus files between packages.
+This syntax was also introduced in Meteor 1.2 to allow importing less/stylus files between packages.
 
-### Loading package-level variables
+Inside package paths are absolute to package root. To import from main package use `{}/foo` syntax. `{}` Selects main app.
 
-To load variables exported by Meteor package, add `!exports` after package name in brackets:
+If you wish you can inside package import modules from other packages (you need to have dependencies on them!)
+
+### Loading some package exports
+
+To load variables exported by some Meteor package, add `!exports` after package name in brackets:
 
 ```
 import {DDP} from '{ddp}!exports'
@@ -174,38 +191,12 @@ You can map alternative name for a module, but remember that you have to provide
     // some_config_file.js
     System.config({
         map: {
-            myComponent: System.normalizeSync('normal/path/to/my/component')
+            myComponent: System.normalizeSync('/normal/path/to/my/component')
         }
     });
 
     // some_component.import.js
-    import myComponent from 'myComponent'; // this will load component from normal/path/to/my/component
-
-### SystemJS packages
-
-SystemJS has a packages concept that plays well with Meteor idea of packages.
-
-Example usage:
-
-    System.config({
-        packages: {
-            myPackage: {
-                main: 'index',
-                format: 'register',
-                map: {
-                    '.': System.normalizeSync('{me:my-package}')
-                }
-            }
-        }
-    });
-
-This will map:
-
-- `myPackage` -> `{me:my-package}/index` (index is set as a default by `main` config option)
-- `myPackage/foo` -> `{me:my-package}/foo`
-- `myPackage/foo/bar` -> `{me:my-package}/foo/bar`
-
-etc...
+    import myComponent from 'myComponent'; // this will load component from /normal/path/to/my/component
 
 ## Troubleshooting
 

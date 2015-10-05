@@ -5,6 +5,7 @@
 
 - [BREAKING CHANGE] Meteor 1.2 is required
 - [BREAKING CHANGE] **All non-relative paths to modules must be absolute and start with `/`, `{}` or `{package:name}`**
+- [BREAKING CHANGE] There is no more need to configure System's package to load default file, and some settings like `map: {'.': System.normalizeSync('XXX')}` can cause infinite loop!
 - [BREAKING CHANGE] `!vars` was rewritten and replaced by `!exports`
 - [BREAKING CHANGE] Remove backward compatibility for deprecated package syntax `author:package`
 - [BREAKING CHANGE] Remove compatibility for `filename.import` syntax 
