@@ -60,6 +60,29 @@ Just add this package to your app:
 
     meteor add universe:modules
 
+### Upgrading from 0.4 to 0.5
+
+Version 0.5 introduces some breaking changes, and most probably your app won't work out of the box.
+For more details check CHANGELOG.md
+
+All paths need to be either absolute (starting with `/`, `{}/`, `{author:package}` etc.) or relative (starting with `./`, `../` etc.)
+
+If after upgrade you got error `RangeError: Maximum call stack size exceeded` it can be caused by invalid System's package config.
+There is no more need for syntax like:
+```
+System.config({
+    packages: {
+        '{me:my-package}': {
+            main: 'index',
+            format: 'register',
+            map: {
+                '.': System.normalizeSync('{me:my-package}')
+            }
+        }
+    }
+});
+```
+Instead, index module will be loaded by default if you pass only package name inside brackets, or if you end module name with `/` (you will link to directory and not a file)
 
 ## Usage
 
@@ -67,7 +90,7 @@ Just add this package to your app:
 
 If you want to see it in action, see our todo example app:
 
-- Source code: https://github.com/vazco/demo_modules
+- Source code: https://github.com/vazco/demo_modules (note: this example is little outdated and will be updated soon)
 - Live demo: http://universe-modules-demo.meteor.com
 
 You can also check out great `meteor-react-example` app by [optilude](https://github.com/optilude).
@@ -103,7 +126,7 @@ If you want to execute this inside Meteor app, you need to use SystemJS API:
 
 Some normal `file.js`:
 
-    System.import('finalComponent').then(function(module){
+    System.import('/finalComponent').then(function(module){
     
         // default export is attached as default property
         // all named exports are attached by their name
@@ -114,37 +137,46 @@ Some normal `file.js`:
     });
 
 This assumes that file `finalComponent.import.js` is inside main app directory.  
-If you have it somewhere else you have to provide full path relative to meteor app directory,
-e.g. `client/components/finalComponent`.
+If you have it somewhere else you have to provide full path starting with meteor app directory,
+e.g. `/client/components/finalComponent`.
 
+
+### Loading file only on the client or server
+
+Because ES2015 specification won't allow you to write `import` statements inside a condition, you cannot import file selectively only on client or server.
+
+In some cases this could be useful, so we introduced syntax that will allow you to do it. Just add `@client` or `@server` suffix after module name.
+On selected platform this will behave like normal import, on the other platform import will return empty module, so every imported variable will be undefined.
 
 ### Loading modules from packages
 
 To load files from packages prefix path with full package name in brackets, e.g:
 
-    import Lib from '{author:package}/lib'
+    import foo from '{author:package}'
+
+to load index file from package, or to load selected module:
+
+    import foo from '{author:package}/foo'
     
-This syntax will be also introduced in Meteor 1.2 to allow importing less/stylus files between packages.
+This syntax was also introduced in Meteor 1.2 to allow importing less/stylus files between packages.
 
-Packages can also register nice module names in SystemJS.
+Inside package paths are absolute to package root. To import from main package use `{}/foo` syntax. `{}` Selects main app.
 
-An example could be [universe:react-bootstrap](https://atmospherejs.com/universe/react-bootstrap).
-Once added to Meteor project, you can write:
+If you wish you can inside package import modules from other packages (you need to have dependencies on them!)
 
-    import { Button } from 'bootstrap';
+### Loading some package exports
 
-and use components from [ReactBootstrap](https://react-bootstrap.github.io/) packaged for Meteor projects.
-
-### Loading package-level variables
-To load exported variables by meteor package, prefix package name like before and add `!vars` on the end(after bracket):
+To load variables exported by some Meteor package, add `!exports` after package name in brackets:
 
 ```
-import {DDP} from '{ddp}!vars'
-import {UniCollection, UniUsers} from '{vazco:universe-collection}!vars'
+import {DDP} from '{ddp}!exports'
+import {UniCollection, UniUsers} from '{universe:collection}!exports'
 ```
-be sure that if you use import from another package, you must have dependency to this package.
+
+Remember that if you want to import from another package, you must have dependency on this package.
 
 ### Loading from npm repository
+
 There is extension for this package that adds a possibility of importing from npm repositories.
 [universe:modules-npm](https://atmospherejs.com/universe/modules-npm) / [Github repo](https://github.com/vazco/meteor-universe-modules-npm/)
 
@@ -159,38 +191,12 @@ You can map alternative name for a module, but remember that you have to provide
     // some_config_file.js
     System.config({
         map: {
-            myComponent: System.normalizeSync('normal/path/to/my/component')
+            myComponent: System.normalizeSync('/normal/path/to/my/component')
         }
     });
 
     // some_component.import.js
-    import myComponent from 'myComponent'; // this will load component from normal/path/to/my/component
-
-### SystemJS packages
-
-SystemJS has a packages concept that plays well with Meteor idea of packages.
-
-Example usage from [universe:react-bootstrap](https://atmospherejs.com/universe/react-bootstrap):
-
-    System.config({
-        packages: {
-            bootstrap: {
-                main: 'main',
-                format: 'register',
-                map: {
-                    '.': System.normalizeSync('{universe:react-bootstrap}')
-                }
-            }
-        }
-    });
-
-This will map:
-
-- `bootstrap` -> `{universe:react-bootstrap}/main` (main is set as a default by... `main` config option :))
-- `bootstrap/foo` -> `{universe:react-bootstrap}/foo`
-- `bootstrap/foo/bar` -> `{universe:react-bootstrap}/foo/bar`
-
-etc...
+    import myComponent from 'myComponent'; // this will load component from /normal/path/to/my/component
 
 ## Troubleshooting
 
@@ -200,7 +206,7 @@ You misspelled import name/path. SystemJS tries to download this file from remot
 
 Check if all files are at their location and import paths are OK.
 
-Unfortunately file loading order is still important!
+**Unfortunately file loading order is still important!**
 
 You need to be sure that all `XXX.import.js` files you want to use are loaded before executing `System.import('XXX')`.  
 This normally isn't a issue as putting them into subdirectory is enough (it doesn't have to be a `lib`!)
@@ -212,13 +218,13 @@ You also don't have to worry about this when using `import` inside `*.import.js`
 
 ### Roadmap
 
-- [ ] Full tests coverage
 - [ ] Allow opt-in for other Babel modules (decorators etc) 
 - [ ] Support for lazy loading modules on the client instead of bundling them with main Meteor app
+- [ ] Full tests coverage
 
 ### Changelog
 
-You can find changelog in CHANGELOG.md file.
+You can find changelog and breaking changes in CHANGELOG.md file.
 
 ### Issues
 
