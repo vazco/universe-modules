@@ -23,6 +23,7 @@ const normalizedRegex = /^\/_modules_\//;
 const assetsRegex = /^\/packages\//;
 const selectedPlatformRegex = /@(client|server)$/;
 const endsWithSlashRegex = /\/$/;
+const endsWithImportRegex = /\.import$/;
 
 
 /**
@@ -34,6 +35,9 @@ const endsWithSlashRegex = /\/$/;
  * @returns {string} - real module name
  */
 const normalizeModuleName = function normalizeModuleName (name, parentName) {
+
+    name = name.replace(endsWithImportRegex, ''); // support for filename.import syntax (required for TypeScript support)
+
     if (name.charAt(0) === '/') {
         // absolute path
 
@@ -94,9 +98,9 @@ const normalizeModuleName = function normalizeModuleName (name, parentName) {
 
 
 /* Add default error reporting to System.import */
-System.import = function (...args) {
-    return originalImport.call(this, ...args).catch(console.error.bind(console));
-};
+//System.import = function (...args) {
+//    return originalImport.call(this, ...args).catch(console.error.bind(console));
+//};
 
 /*
  * Overwrite SystemJS normalize with our method

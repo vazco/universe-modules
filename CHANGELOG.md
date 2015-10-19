@@ -1,6 +1,10 @@
 
 ## 0.5
 
+### 0.5.1
+
+- Bring back compatibility for `filename.import` syntax (TypeScript support)
+
 ### 0.5.0
 
 - [BREAKING CHANGE] Meteor 1.2 is required
