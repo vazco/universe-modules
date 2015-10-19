@@ -20,6 +20,7 @@ const appRegex = /^\{}\//;
 const packageRegex = /^{([\w-]*?):?([\w-]+)}/;
 const onlyPackageRegex = /^{([\w-]*?):?([\w-]+)}$/;
 const normalizedRegex = /^\/_modules_\//;
+const assetsRegex = /^\/packages\//;
 const selectedPlatformRegex = /@(client|server)$/;
 const endsWithSlashRegex = /\/$/;
 
@@ -36,8 +37,8 @@ const normalizeModuleName = function normalizeModuleName (name, parentName) {
     if (name.charAt(0) === '/') {
         // absolute path
 
-        if (normalizedRegex.test(name)) {
-            // already normalized name, leave it as is
+        if (normalizedRegex.test(name) || assetsRegex.test(name)) {
+            // already normalized name or meteor asset, leave it as is
             return name;
         }
 
