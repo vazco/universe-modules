@@ -10,6 +10,7 @@
 ### 0.5.1
 
 - Bring back compatibility for `filename.import` syntax (TypeScript support)
+- Allow loading assets from packages through SystemJS
 
 ### 0.5.0
 
