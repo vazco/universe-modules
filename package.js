@@ -1,6 +1,6 @@
 Package.describe({
     name: 'universe:modules',
-    version: '0.5.1',
+    version: '0.6.0',
     summary: 'Use ES6 / ES2015 modules in Meteor with SystemJS!',
     git: 'https://github.com/vazco/universe-modules',
     documentation: 'README.md'
@@ -8,8 +8,8 @@ Package.describe({
 
 Package.registerBuildPlugin({
     name: 'compile-universe-modules',
-    use: ['babel-compiler@5.8.24_1', 'ecmascript', 'underscore@1.0.4'],
-    sources: ['build-plugin.js']
+    use: ['universe:modules-compiler@1.0.0'],
+    sources: ['plugin.js']
 });
 
 Package.onUse(function (api) {

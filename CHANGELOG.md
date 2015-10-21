@@ -1,3 +1,9 @@
+## 0.6
+
+### 0.6.0
+
+- Move `UniverseModulesCompiler` to separate package as a dependency
+- New packages: `universe:modules-compiler` and `universe:modules-entrypoint`
 
 ## 0.5
 
