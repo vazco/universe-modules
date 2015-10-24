@@ -190,7 +190,7 @@ This syntax was also introduced in Meteor 1.2 to allow importing less/stylus fil
 Inside package you can also import files from main app with `{}/foo` syntax. `{}` selects main app.
 If you wish you can also import modules from other packages (but you need to have dependencies on them!)
 
-#### Extending of transformers for package files
+#### Extending babel transformers for package files
 
 In your package.js:
 
