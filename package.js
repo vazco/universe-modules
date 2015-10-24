@@ -8,7 +8,7 @@ Package.describe({
 
 Package.registerBuildPlugin({
     name: 'compile-universe-modules',
-    use: ['universe:modules-compiler@1.0.0'],
+    use: ['universe:modules-compiler@1.0.2'],
     sources: ['plugin.js']
 });
 
