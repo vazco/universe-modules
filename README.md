@@ -195,7 +195,7 @@ If you wish you can also import modules from other packages (but you need to hav
 In your package.js:
 
 ```
-api.addFiles('externals.npm.json', ['server', 'client'], {babelWhitelist: ['es7.functionBind']})
+api.addFiles('file.import.js', ['server', 'client'], {babelWhitelist: ['es7.functionBind']})
 ```
 
 ### Loading some package exports
