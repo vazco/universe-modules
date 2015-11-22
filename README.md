@@ -256,7 +256,7 @@ You also don't have to worry about this when using `import` inside `*.import.js`
 ### Roadmap
 
 - [x] Support `*.js` files 
-- [ ] Allow opt-in for other Babel modules (decorators etc) 
+- [-] Allow opt-in for other Babel modules (decorators etc) (Works only for packages)
 - [ ] Support for lazy loading modules on the client instead of bundling them with main Meteor app
 - [ ] Full tests coverage
 

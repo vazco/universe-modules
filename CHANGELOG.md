@@ -1,5 +1,9 @@
 ## 0.6
 
+### 0.6.2
+
+- Cache performance improving by rewriting on Meteor Cache Compiler instead of Babel Cache
+
 ### 0.6.0
 
 - Move `UniverseModulesCompiler` to separate package as a dependency
