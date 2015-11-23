@@ -50,10 +50,15 @@ This package use file extensions `*.import.js` and `*.import.jsx` for compatibil
 
 By default only files with `.import.js(x)` extension are bundled as modules, all other files are processed as usual.   
 
-If you want to use modules in all `*.js` files check out **[universe:modules-entrypoint](https://github.com/vazco/meteor-universe-modules-entrypoint)**. 
+If you want to use modules in all `*.js` files check out 
+**[universe:ecmascript](https://github.com/vazco/universe-ecmascript)**
+ or **[universe:modules-entrypoint](https://github.com/vazco/meteor-universe-modules-entrypoint)**. 
 
 *Entrypoint* package parse all `*.js` files and provide one entry point file to run your application.
 Check [docs](https://github.com/vazco/meteor-universe-modules-entrypoint) for more info how to setup modules in this mode. 
+
+*Ecmascript* package parse all `*.js` and `*.jsx` files and load them automatically in the  first possible moment.
+Check [docs](https://github.com/vazco/universe-ecmascript) for more info how to setup modules in this mode. 
 
 ### Benefits of modules is Meteor
 
