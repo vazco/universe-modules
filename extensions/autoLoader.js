@@ -11,30 +11,39 @@ System.autoLoad = (name, deps, fn) => {
         }
         loadedModules.push(m);
     });
+
     if (mustWait) {
         System.register(name, deps, fn);
-        return System.import(name);
+        const p = System.import(name);
+        p.catch(console.error.bind(console));
+        return p;
     }
-    const exports = {};
-    const registerExport = (key, value) => {
-        if (typeof  key === 'object'){
-            Object(key).forEach((k) => exports[k] = key[k]);
-            return;
+
+    try {
+        const exports = {};
+        const registerExport = (key, value) => {
+            if (typeof  key === 'object') {
+                Object(key).forEach((k) => exports[k] = key[k]);
+                return;
+            }
+            exports[key] = value;
+        };
+        const declaration = fn(registerExport, exports);
+        if (!declaration.setters || !declaration.execute) {
+            throw new TypeError('Invalid Module form for ' + name);
         }
-        exports[key] = value;
-    };
-    const declaration = fn(registerExport, exports);
-    if (!declaration.setters || !declaration.execute) {
-        throw new TypeError('Invalid Module form for ' + name);
+        declaration.setters.forEach((setFn, index) => {
+            setFn(loadedModules[index]);
+        });
+        const output = declaration.execute.call(this);
+        if (output) {
+            declaration.exports = output;
+        }
+        const newModule = System.newModule(exports);
+        System.set(name, newModule);
+        return Promise.resolve(newModule);
+    } catch(err) {
+        console.error(err);
+        return Promise.reject(err);
     }
-    declaration.setters.forEach((setFn, index) => {
-        setFn(loadedModules[index]);
-    });
-    const output = declaration.execute.call(this);
-    if (output) {
-        declaration.exports = output;
-    }
-    const newModule = System.newModule(exports);
-    System.set(name, newModule);
-    return Promise.resolve(newModule);
 };
