@@ -15,9 +15,15 @@ System.autoLoad = (name, deps, fn) => {
         System.register(name, deps, fn);
         return System.import(name);
     }
-    const module = {exports: {}, id: name};
-    const exports = module.exports;
-    const declaration = fn(exports, module);
+    const exports = {};
+    const registerExport = (key, value) => {
+        if (typeof  key === 'object'){
+            Object(key).forEach((k) => exports[k] = key[k]);
+            return;
+        }
+        exports[key] = value;
+    };
+    const declaration = fn(registerExport, exports);
     if (!declaration.setters || !declaration.execute) {
         throw new TypeError('Invalid Module form for ' + name);
     }
