@@ -2,12 +2,11 @@ System.autoLoad = (name, deps, fn) => {
     deps = deps || [];
     deps = deps.map(n => System.normalizeSync(n, name));
     var loadedModules = [];
-    var mustWait = false;
-    deps.every(mName => {
+    var mustWait = deps.some(mName => {
         const m = System.get(mName);
         if (!m) {
             mustWait = true;
-            return false;
+            return true;
         }
         loadedModules.push(m);
     });
