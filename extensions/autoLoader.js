@@ -22,14 +22,16 @@ System.autoLoad = (name, deps, fn) => {
         const exports = {};
         const registerExport = (key, value) => {
             if (typeof  key === 'object') {
-                Object(key).forEach((k) => exports[k] = key[k]);
+                Object.keys(key).forEach((k) => exports[k] = key[k]);
                 return;
             }
             exports[key] = value;
         };
         const declaration = fn(registerExport, exports);
         if (!declaration.setters || !declaration.execute) {
-            throw new TypeError('Invalid Module form for ' + name);
+            const msg = 'Invalid Module form for ' + name;
+            console.error(msg);
+            return Promise.reject(new Error(msg));
         }
         declaration.setters.forEach((setFn, index) => {
             setFn(loadedModules[index]);
