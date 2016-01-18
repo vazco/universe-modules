@@ -1,5 +1,10 @@
 ## 0.6
 
+## 0.6.8
+- Updated SystemJS to v0.19.16
+- Added autoLoad function
+- New Package `universe:modules-ecmascript`
+
 ### 0.6.2
 
 - Cache performance improving by rewriting on Meteor Cache Compiler instead of Babel Cache
