@@ -2,6 +2,11 @@
 
 # Universe Modules
 
+## This package is deprecated!
+
+Since Meteor 1.3 you should use native module support instead of this package.
+For more details please visit https://docs.meteor.com/packages/modules.html
+
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
