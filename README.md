@@ -1,15 +1,22 @@
-## Abandonware
+<h1 align="center">
+    <a href="https://github.com/vazco">vazco</a>/Universe Modules
+</h1>
 
-# Universe Modules
+&nbsp;
 
-## This package is deprecated!
+<h3 align="center">
+  -- Abandonware. This package is deprecated! --
+</h3>
 
-Since Meteor 1.3 you should use native module support instead of this package.
-For more details please visit https://docs.meteor.com/packages/modules.html
+<p align="center">
+  Since Meteor 1.3 you should use native module support instead of this package.
+  For more details please visit <a href="https://docs.meteor.com/packages/modules.html">https://docs.meteor.com/packages/modules.html</a>
+</p>
+
+&nbsp;
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-
 
 - [Use ES6 / ES2015 modules in Meteor today!](#use-es6--es2015-modules-in-meteor-today)
   - [File extensions and universe:modules-entrypoint package](#file-extensions-and-universemodules-entrypoint-package)
@@ -53,17 +60,17 @@ Under the hood [Babel.js](https://babeljs.io) and [SystemJS](https://github.com/
 
 This package use file extensions `*.import.js` and `*.import.jsx` for compatibility reasons.
 
-By default only files with `.import.js(x)` extension are bundled as modules, all other files are processed as usual.   
+By default only files with `.import.js(x)` extension are bundled as modules, all other files are processed as usual.
 
-If you want to use modules in all `*.js` files check out 
+If you want to use modules in all `*.js` files check out
 **[universe:ecmascript](https://github.com/vazco/universe-ecmascript)**
- or **[universe:modules-entrypoint](https://github.com/vazco/meteor-universe-modules-entrypoint)**. 
+ or **[universe:modules-entrypoint](https://github.com/vazco/meteor-universe-modules-entrypoint)**.
 
 *Entrypoint* package parse all `*.js` files and provide one entry point file to run your application.
-Check [docs](https://github.com/vazco/meteor-universe-modules-entrypoint) for more info how to setup modules in this mode. 
+Check [docs](https://github.com/vazco/meteor-universe-modules-entrypoint) for more info how to setup modules in this mode.
 
 *Ecmascript* package parse all `*.js` and `*.jsx` files and load them automatically in the  first possible moment.
-Check [docs](https://github.com/vazco/universe-ecmascript) for more info how to setup modules in this mode. 
+Check [docs](https://github.com/vazco/universe-ecmascript) for more info how to setup modules in this mode.
 
 ### Benefits of modules is Meteor
 
@@ -72,7 +79,7 @@ You also don't have to worry so much about file loading order.
 
 This is especially useful when working with React - creating lots of new components don't have to pollute global namespace.
 Also code is much simpler to reason about, and syntax is more friendly.
- 
+
 
 ## Installation
 
@@ -141,7 +148,7 @@ Then you can import and make use of them inside some other file, e.g. `finalComp
 
     import first from './firstComponent';
     import second from './secondComponent';
-    
+
     export default function(){
       return first() + ' ' + second() + '!';
     }
@@ -152,16 +159,16 @@ If you want to execute this inside Meteor app, you need to use SystemJS API:
 Some normal `file.js`:
 
     System.import('/finalComponent').then(function(module){
-    
+
         // default export is attached as default property
         // all named exports are attached by their name
         var sayHello = module.default;
-        
+
         console.log( sayHello() ); // this will log "Hello World!"
-        
+
     });
 
-This assumes that file `finalComponent.import.js` is inside main app directory.  
+This assumes that file `finalComponent.import.js` is inside main app directory.
 If you have it somewhere else you have to provide full path starting with meteor app directory,
 e.g. `/client/components/finalComponent`.
 
@@ -255,17 +262,17 @@ Check if all files are at their location and import paths are OK.
 
 **Unfortunately file loading order is still important!**
 
-You need to be sure that all `XXX.import.js` files you want to use are loaded before executing `System.import('XXX')`.  
+You need to be sure that all `XXX.import.js` files you want to use are loaded before executing `System.import('XXX')`.
 This normally isn't a issue as putting them into subdirectory is enough (it doesn't have to be a `lib`!)
 
-You also don't have to worry about this when using `import` inside `*.import.js` files - modules will be loaded correctly regardless of file loading order. 
+You also don't have to worry about this when using `import` inside `*.import.js` files - modules will be loaded correctly regardless of file loading order.
 
 
 ## About
 
 ### Roadmap
 
-- [x] Support `*.js` files 
+- [x] Support `*.js` files
 - [-] Allow opt-in for other Babel modules (decorators etc) (Works only for packages)
 - [ ] Support for lazy loading modules on the client instead of bundling them with main Meteor app
 - [ ] Full tests coverage
@@ -276,12 +283,13 @@ You can find changelog and breaking changes in CHANGELOG.md file.
 
 ### Issues
 
-Please report all found issues on [GitHub issue tracker](https://github.com/vazco/universe-modules/issues) 
+Please report all found issues on [GitHub issue tracker](https://github.com/vazco/universe-modules/issues)
 
-### Copyright and license
-
-Code and documentation &copy; 2015 [Vazco.eu](http://vazco.eu)
-Released under the MIT license. 
+### License
 
 This package is part of [Universe](http://unicms.io), a package ecosystem based on [Meteor platform](http://meteor.com) maintained by [Vazco](http://www.vazco.eu).
 It works as standalone Meteor package, but you can get much more features when using the whole system.
+
+<img src="https://vazco.eu/banner.png" align="right">
+
+**Like every package maintained by [Vazco](https://vazco.eu/), Universe Modules is [MIT licensed](https://github.com/vazco/uniforms/blob/master/LICENSE).**
